@@ -5,9 +5,7 @@ import {
   DollarSign, 
   TrendingUp, 
   Users, 
-  Clock, 
   Activity, 
-  ArrowUpRight, 
   Plus, 
   Settings,
   Briefcase,
@@ -35,13 +33,8 @@ export function Dashboard({ user, profile, onLogout, onProfileUpdated }: Dashboa
   const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url || null;
   const userEmail = profile?.email || user?.email || '';
 
-  // Mock loan data to show a premium layout
-  const mockLoans = [
-    { id: 'LN-2026-041', client: 'Samantha Vance', amount: 12500, interest: 8.5, status: 'Active', term: '12 months', date: '2026-05-12' },
-    { id: 'LN-2026-039', client: 'Marcus Sterling', amount: 48000, interest: 10.2, status: 'Pending', term: '36 months', date: '2026-06-01' },
-    { id: 'LN-2026-035', client: 'Elena Rostova', amount: 8500, interest: 7.0, status: 'Paid', term: '6 months', date: '2026-04-10' },
-    { id: 'LN-2026-032', client: 'David Kim', amount: 15000, interest: 9.0, status: 'Active', term: '24 months', date: '2026-03-24' },
-  ];
+  // Portfolio loan list (empty for database synchronization)
+  const loans: any[] = [];
 
   return (
     <div style={styles.dashboardContainer} className="animate-fade-in">
@@ -155,12 +148,9 @@ export function Dashboard({ user, profile, onLogout, onProfileUpdated }: Dashboa
                     <DollarSign size={18} color="#6366f1" />
                   </div>
                 </div>
-                <div style={styles.statVal}>$184,200.00</div>
+                <div style={styles.statVal}>$0.00</div>
                 <div style={styles.statChange}>
-                  <span style={{ color: '#10b981', display: 'flex', alignItems: 'center', gap: '2px' }}>
-                    <ArrowUpRight size={14} /> +12.4%
-                  </span>
-                  <span style={styles.statPeriod}>vs last month</span>
+                  <span style={styles.statPeriod}>No active loans</span>
                 </div>
               </div>
 
@@ -171,12 +161,9 @@ export function Dashboard({ user, profile, onLogout, onProfileUpdated }: Dashboa
                     <TrendingUp size={18} color="#ec4899" />
                   </div>
                 </div>
-                <div style={styles.statVal}>$14,835.40</div>
+                <div style={styles.statVal}>$0.00</div>
                 <div style={styles.statChange}>
-                  <span style={{ color: '#10b981', display: 'flex', alignItems: 'center', gap: '2px' }}>
-                    <ArrowUpRight size={14} /> +8.2%
-                  </span>
-                  <span style={styles.statPeriod}>cumulative</span>
+                  <span style={styles.statPeriod}>No interest accrued</span>
                 </div>
               </div>
 
@@ -187,12 +174,9 @@ export function Dashboard({ user, profile, onLogout, onProfileUpdated }: Dashboa
                     <Users size={18} color="#3b82f6" />
                   </div>
                 </div>
-                <div style={styles.statVal}>48 Active</div>
+                <div style={styles.statVal}>0 Active</div>
                 <div style={styles.statChange}>
-                  <span style={{ color: '#f59e0b', display: 'flex', alignItems: 'center', gap: '2px' }}>
-                    <Clock size={14} /> 3 Pending
-                  </span>
-                  <span style={styles.statPeriod}>approvals</span>
+                  <span style={styles.statPeriod}>0 pending approvals</span>
                 </div>
               </div>
             </div>
@@ -223,26 +207,34 @@ export function Dashboard({ user, profile, onLogout, onProfileUpdated }: Dashboa
                     </tr>
                   </thead>
                   <tbody>
-                    {mockLoans.map((loan) => (
-                      <tr key={loan.id} style={styles.tr}>
-                        <td style={{ ...styles.td, fontWeight: '700', color: '#818cf8' }}>{loan.id}</td>
-                        <td style={{ ...styles.td, color: '#fff', fontWeight: '500' }}>{loan.client}</td>
-                        <td style={{ ...styles.td, color: '#fff' }}>${loan.amount.toLocaleString()}</td>
-                        <td style={styles.td}>{loan.interest}%</td>
-                        <td style={styles.td}>{loan.term}</td>
-                        <td style={styles.td}>{loan.date}</td>
-                        <td style={styles.td}>
-                          <span style={{
-                            ...styles.statusTag,
-                            ...(loan.status === 'Active' ? styles.statusActive : {}),
-                            ...(loan.status === 'Pending' ? styles.statusPending : {}),
-                            ...(loan.status === 'Paid' ? styles.statusPaid : {}),
-                          }}>
-                            {loan.status}
-                          </span>
+                    {loans.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} style={{ ...styles.td, textAlign: 'center', padding: '3.5rem 1rem', color: 'var(--text-muted)' }}>
+                          No active loans found. Click "New Loan" to create your first tracking profile.
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      loans.map((loan: any) => (
+                        <tr key={loan.id} style={styles.tr}>
+                          <td style={{ ...styles.td, fontWeight: '700', color: '#818cf8' }}>{loan.id}</td>
+                          <td style={{ ...styles.td, color: '#fff', fontWeight: '500' }}>{loan.client}</td>
+                          <td style={{ ...styles.td, color: '#fff' }}>${loan.amount.toLocaleString()}</td>
+                          <td style={styles.td}>{loan.interest}%</td>
+                          <td style={styles.td}>{loan.term}</td>
+                          <td style={styles.td}>{loan.date}</td>
+                          <td style={styles.td}>
+                            <span style={{
+                              ...styles.statusTag,
+                              ...(loan.status === 'Active' ? styles.statusActive : {}),
+                              ...(loan.status === 'Pending' ? styles.statusPending : {}),
+                              ...(loan.status === 'Paid' ? styles.statusPaid : {}),
+                            }}>
+                              {loan.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
