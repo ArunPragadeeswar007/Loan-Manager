@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { supabase, type Profile } from '../supabase';
 import { 
   LogOut, 
@@ -9,8 +9,21 @@ import {
   Plus, 
   Settings,
   Briefcase,
-  User
+  User,
+  CheckCircle
 } from 'lucide-react';
+import { 
+  Box, 
+  Flex, 
+  Heading, 
+  Text, 
+  Button, 
+  Table, 
+  Image, 
+  VStack, 
+  HStack,
+  Grid
+} from '@chakra-ui/react';
 import { ProfilePage } from './ProfilePage';
 
 interface DashboardProps {
@@ -37,60 +50,138 @@ export function Dashboard({ user, profile, onLogout, onProfileUpdated }: Dashboa
   const loans: any[] = [];
 
   return (
-    <div style={styles.dashboardContainer} className="animate-fade-in">
-      {/* Background blobs */}
-      <div className="ambient-bg">
-        <div className="ambient-blob-1"></div>
-        <div className="ambient-blob-2"></div>
-        <div className="ambient-blob-3"></div>
-      </div>
-
+    <Flex minH="100vh" bg="#F4F6FA" color="gray.700" fontFamily="body">
       {/* Sidebar Navigation */}
-      <aside style={styles.sidebar} className="glass-panel">
-        <div style={styles.sidebarHeader}>
-          <Briefcase size={22} color="#818cf8" />
-          <span style={styles.sidebarBrand}>LoanManager PRO</span>
-        </div>
+      <Box 
+        w="260px" 
+        bg="white" 
+        borderRight="1px solid" 
+        borderColor="gray.200" 
+        p={6} 
+        position="fixed" 
+        top={0} 
+        bottom={0} 
+        left={0} 
+        zIndex={10}
+        display={{ base: "none", md: "flex" }} 
+        flexDirection="column"
+        boxShadow="sm"
+      >
+        <Flex align="center" gap={3} mb={10}>
+          <Briefcase size={22} color="#4f46e5" />
+          <Heading size="xs" fontWeight="bold" color="gray.900" letterSpacing="-0.02em" fontSize="xl">
+            LoanManager
+          </Heading>
+        </Flex>
         
-        <nav style={styles.nav}>
-          <button 
+        <VStack align="stretch" gap={2} flex={1}>
+          <Button 
             onClick={() => setActiveTab('dashboard')} 
-            style={{ ...styles.navLink, ...(activeTab === 'dashboard' ? styles.navLinkActive : {}) }}
-            className={activeTab !== 'dashboard' ? "nav-link-hover" : ""}
+            justifyContent="flex-start" 
+            gap={3} 
+            bg={activeTab === 'dashboard' ? 'indigo.50' : 'transparent'} 
+            color={activeTab === 'dashboard' ? 'indigo.700' : 'gray.600'} 
+            borderRadius="lg" 
+            px={4} 
+            py={6}
+            _hover={activeTab === 'dashboard' ? { bg: 'indigo.100' } : { bg: 'gray.100', color: 'gray.900' }}
+            variant="ghost"
           >
-            <Activity size={18} /> Dashboard
-          </button>
+            <Activity size={18} /> 
+            <Text fontWeight={activeTab === 'dashboard' ? "bold" : "medium"} fontSize="sm">Dashboard</Text>
+          </Button>
           
-          <button 
+          <Button 
             onClick={() => setActiveTab('profile')} 
-            style={{ ...styles.navLink, ...(activeTab === 'profile' ? styles.navLinkActive : {}) }}
-            className={activeTab !== 'profile' ? "nav-link-hover" : ""}
+            justifyContent="flex-start" 
+            gap={3} 
+            bg={activeTab === 'profile' ? 'indigo.50' : 'transparent'} 
+            color={activeTab === 'profile' ? 'indigo.700' : 'gray.600'} 
+            borderRadius="lg" 
+            px={4} 
+            py={6}
+            _hover={activeTab === 'profile' ? { bg: 'indigo.100' } : { bg: 'gray.100', color: 'gray.900' }}
+            variant="ghost"
           >
-            <User size={18} /> Profile
-          </button>
+            <User size={18} /> 
+            <Text fontWeight={activeTab === 'profile' ? "bold" : "medium"} fontSize="sm">Profile</Text>
+          </Button>
 
-          <button className="nav-link-hover" disabled style={{ opacity: 0.4, cursor: 'not-allowed', ...styles.navLink }}>
-            <DollarSign size={18} /> Loans
-          </button>
+          <Button 
+            justifyContent="flex-start" 
+            gap={3} 
+            bg="transparent" 
+            color="gray.300" 
+            borderRadius="lg" 
+            px={4} 
+            py={6}
+            disabled 
+            opacity={0.4} 
+            cursor="not-allowed"
+            variant="ghost"
+          >
+            <DollarSign size={18} /> 
+            <Text fontWeight="medium" fontSize="sm">Loans</Text>
+          </Button>
           
-          <button className="nav-link-hover" disabled style={{ opacity: 0.4, cursor: 'not-allowed', ...styles.navLink }}>
-            <Users size={18} /> Clients
-          </button>
+          <Button 
+            justifyContent="flex-start" 
+            gap={3} 
+            bg="transparent" 
+            color="gray.300" 
+            borderRadius="lg" 
+            px={4} 
+            py={6}
+            disabled 
+            opacity={0.4} 
+            cursor="not-allowed"
+            variant="ghost"
+          >
+            <Users size={18} /> 
+            <Text fontWeight="medium" fontSize="sm">Clients</Text>
+          </Button>
           
-          <button className="nav-link-hover" disabled style={{ opacity: 0.4, cursor: 'not-allowed', ...styles.navLink }}>
-            <Settings size={18} /> Settings
-          </button>
-        </nav>
+          <Button 
+            justifyContent="flex-start" 
+            gap={3} 
+            bg="transparent" 
+            color="gray.300" 
+            borderRadius="lg" 
+            px={4} 
+            py={6}
+            disabled 
+            opacity={0.4} 
+            cursor="not-allowed"
+            variant="ghost"
+          >
+            <Settings size={18} /> 
+            <Text fontWeight="medium" fontSize="sm">Settings</Text>
+          </Button>
+        </VStack>
 
-        <div style={styles.sidebarFooter}>
-          <button onClick={handleLogout} style={styles.logoutBtn} className="btn-secondary">
+        <Box pt={4} borderTop="1px solid" borderColor="gray.100">
+          <Button 
+            onClick={handleLogout} 
+            variant="outline" 
+            borderColor="gray.200" 
+            color="gray.600" 
+            _hover={{ bg: "gray.50", color: "gray.900" }} 
+            w="100%"
+            gap={2}
+          >
             <LogOut size={16} /> Logout
-          </button>
-        </div>
-      </aside>
+          </Button>
+        </Box>
+      </Box>
 
       {/* Main Content Area */}
-      <main style={styles.mainContent}>
+      <Box 
+        flex={1} 
+        ml={{ base: 0, md: "260px" }} 
+        p={{ base: 6, md: 10 }} 
+        bg="#F4F6FA" 
+        minH="100vh"
+      >
         {activeTab === 'profile' ? (
           <ProfilePage 
             user={user} 
@@ -101,430 +192,166 @@ export function Dashboard({ user, profile, onLogout, onProfileUpdated }: Dashboa
         ) : (
           <>
             {/* Top Navbar */}
-            <header style={styles.header}>
-              <div>
-                <h2 style={styles.welcomeText}>
-                  Welcome back, <span className="text-gradient-primary">{displayName}</span>!
-                </h2>
-                <p style={styles.headerSubtitle}>Here is what's happening with your loan portfolios today.</p>
-              </div>
+            <Flex 
+              justify="space-between" 
+              align="center" 
+              direction={{ base: "column", sm: "row" }} 
+              gap={4} 
+              mb={8}
+            >
+              <Box>
+                <Heading size="lg" fontWeight="extrabold" color="gray.950" fontSize="3xl" letterSpacing="-0.03em" mb={1}>
+                  Welcome back, <Text as="span" color="indigo.600">{displayName}</Text>!
+                </Heading>
+                <Text fontSize="sm" color="gray.500">Here is what's happening with your loan portfolios today.</Text>
+              </Box>
 
-              <div style={styles.headerActions}>
-                <div 
-                  onClick={() => setActiveTab('profile')}
-                  style={{ ...styles.profileBadge, cursor: 'pointer' }} 
-                  className="glass-panel nav-link-hover"
-                >
-                  {avatarUrl ? (
-                    <img src={avatarUrl} alt={displayName} style={styles.avatar} />
-                  ) : (
-                    <div style={styles.avatarPlaceholder}>{displayName[0].toUpperCase()}</div>
-                  )}
-                  <div style={styles.profileText}>
-                    <span style={styles.profileName}>{displayName}</span>
-                    <span style={styles.profileEmail}>{userEmail}</span>
-                  </div>
-                </div>
-              </div>
-            </header>
+              <HStack 
+                onClick={() => setActiveTab('profile')}
+                gap={3} 
+                p={2} 
+                pl={2} 
+                pr={4} 
+                borderRadius="full" 
+                bg="white" 
+                border="1px solid" 
+                borderColor="gray.200" 
+                cursor="pointer" 
+                _hover={{ bg: "gray.50" }}
+                transition="background 0.2s"
+                boxShadow="sm"
+              >
+                {avatarUrl ? (
+                  <Image src={avatarUrl} alt={displayName} borderRadius="full" boxSize="38px" border="2px solid" borderColor="indigo.500" />
+                ) : (
+                  <Flex borderRadius="full" boxSize="38px" bgGradient="to-tr" gradientFrom="indigo.500" gradientTo="purple.500" align="center" justify="center" fontWeight="bold" color="white">
+                    {displayName[0].toUpperCase()}
+                  </Flex>
+                )}
+                <VStack align="flex-start" gap={0}>
+                  <Text fontSize="xs" fontWeight="bold" color="gray.900" lineHeight="1.2">{displayName}</Text>
+                  <Text fontSize="10px" color="gray.500" lineHeight="1.2">{userEmail}</Text>
+                </VStack>
+              </HStack>
+            </Flex>
 
             {/* Database Sync Banner */}
-            <div className="alert alert-success animate-slide-up" style={styles.syncAlert}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ flexShrink: 0 }}>
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                <polyline points="22 4 12 14.01 9 11.01"/>
-              </svg>
-              <div>
+            <Flex 
+              align="center" 
+              gap={3} 
+              bg="green.50" 
+              border="1px solid" 
+              borderColor="green.200" 
+              color="green.800" 
+              p={4} 
+              borderRadius="xl" 
+              mb={8}
+              boxShadow="sm"
+            >
+              <CheckCircle size={18} style={{ flexShrink: 0 }} />
+              <Text fontSize="sm" fontWeight="medium">
                 <strong>Database Account Verified:</strong> Successfully authenticated with Supabase Google Auth and verified your user row in the <code>profiles</code> table.
-              </div>
-            </div>
+              </Text>
+            </Flex>
 
             {/* Quick Stats Grid */}
-            <div style={styles.statsGrid}>
-              <div className="glass-panel" style={styles.statCard}>
-                <div style={styles.statHeader}>
-                  <span style={styles.statLabel}>Active Portfolio</span>
-                  <div style={{ ...styles.statIconContainer, backgroundColor: 'rgba(99, 102, 241, 0.1)' }}>
-                    <DollarSign size={18} color="#6366f1" />
-                  </div>
-                </div>
-                <div style={styles.statVal}>$0.00</div>
-                <div style={styles.statChange}>
-                  <span style={styles.statPeriod}>No active loans</span>
-                </div>
-              </div>
+            <Grid templateColumns={{ base: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" }} gap={6} mb={10}>
+              <Box bg="white" border="1px solid" borderColor="gray.200" p={6} borderRadius="xl" boxShadow="sm">
+                <Flex justify="space-between" align="center" mb={4}>
+                  <Text fontSize="sm" fontWeight="bold" color="gray.500">Active Portfolio</Text>
+                  <Flex w="36px" h="36px" borderRadius="lg" bg="indigo.50" align="center" justify="center">
+                    <DollarSign size={18} color="#4f46e5" />
+                  </Flex>
+                </Flex>
+                <Heading size="lg" fontWeight="extrabold" color="gray.900" fontSize="3xl" mb={1}>$0.00</Heading>
+                <Text fontSize="xs" color="gray.400">No active loans</Text>
+              </Box>
 
-              <div className="glass-panel" style={styles.statCard}>
-                <div style={styles.statHeader}>
-                  <span style={styles.statLabel}>Interest Accrued</span>
-                  <div style={{ ...styles.statIconContainer, backgroundColor: 'rgba(236, 72, 153, 0.1)' }}>
-                    <TrendingUp size={18} color="#ec4899" />
-                  </div>
-                </div>
-                <div style={styles.statVal}>$0.00</div>
-                <div style={styles.statChange}>
-                  <span style={styles.statPeriod}>No interest accrued</span>
-                </div>
-              </div>
+              <Box bg="white" border="1px solid" borderColor="gray.200" p={6} borderRadius="xl" boxShadow="sm">
+                <Flex justify="space-between" align="center" mb={4}>
+                  <Text fontSize="sm" fontWeight="bold" color="gray.500">Interest Accrued</Text>
+                  <Flex w="36px" h="36px" borderRadius="lg" bg="pink.50" align="center" justify="center">
+                    <TrendingUp size={18} color="#db2777" />
+                  </Flex>
+                </Flex>
+                <Heading size="lg" fontWeight="extrabold" color="gray.900" fontSize="3xl" mb={1}>$0.00</Heading>
+                <Text fontSize="xs" color="gray.400">No interest accrued</Text>
+              </Box>
 
-              <div className="glass-panel" style={styles.statCard}>
-                <div style={styles.statHeader}>
-                  <span style={styles.statLabel}>Total Clients</span>
-                  <div style={{ ...styles.statIconContainer, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}>
-                    <Users size={18} color="#3b82f6" />
-                  </div>
-                </div>
-                <div style={styles.statVal}>0 Active</div>
-                <div style={styles.statChange}>
-                  <span style={styles.statPeriod}>0 pending approvals</span>
-                </div>
-              </div>
-            </div>
+              <Box bg="white" border="1px solid" borderColor="gray.200" p={6} borderRadius="xl" boxShadow="sm" gridColumn={{ sm: "span 2", lg: "span 1" }}>
+                <Flex justify="space-between" align="center" mb={4}>
+                  <Text fontSize="sm" fontWeight="bold" color="gray.500">Total Clients</Text>
+                  <Flex w="36px" h="36px" borderRadius="lg" bg="blue.50" align="center" justify="center">
+                    <Users size={18} color="#2563eb" />
+                  </Flex>
+                </Flex>
+                <Heading size="lg" fontWeight="extrabold" color="gray.900" fontSize="3xl" mb={1}>0 Active</Heading>
+                <Text fontSize="xs" color="gray.400">0 pending approvals</Text>
+              </Box>
+            </Grid>
 
             {/* Loan Table Section */}
-            <section style={styles.tableSection} className="glass-panel">
-              <div style={styles.tableHeader}>
-                <div>
-                  <h3 style={styles.tableTitle}>Recent Loan Activity</h3>
-                  <p style={styles.tableSubtitle}>List of active, pending, and paid loan application profiles.</p>
-                </div>
-                <button className="btn-primary" style={styles.createBtn}>
+            <Box bg="white" border="1px solid" borderColor="gray.200" p={6} borderRadius="xl" boxShadow="sm">
+              <Flex justify="space-between" align="center" mb={6} direction={{ base: "column", sm: "row" }} gap={4}>
+                <Box>
+                  <Heading size="md" fontWeight="bold" color="gray.900" fontSize="xl" mb={1}>Recent Loan Activity</Heading>
+                  <Text fontSize="xs" color="gray.500">List of active, pending, and paid loan application profiles.</Text>
+                </Box>
+                <Button 
+                  bgGradient="to-r" 
+                  gradientFrom="indigo.600" 
+                  gradientTo="purple.600" 
+                  color="white" 
+                  px={5} 
+                  py={2} 
+                  borderRadius="lg" 
+                  _hover={{ bg: "indigo.700" }}
+                  gap={2}
+                >
                   <Plus size={16} /> New Loan
-                </button>
-              </div>
+                </Button>
+              </Flex>
 
-              <div style={styles.tableWrapper}>
-                <table style={styles.table}>
-                  <thead>
-                    <tr>
-                      <th style={styles.th}>Loan ID</th>
-                      <th style={styles.th}>Client Name</th>
-                      <th style={styles.th}>Principal</th>
-                      <th style={styles.th}>Interest</th>
-                      <th style={styles.th}>Term</th>
-                      <th style={styles.th}>Applied Date</th>
-                      <th style={styles.th}>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+              <Box overflowX="auto">
+                <Table.Root variant="line" size="md">
+                  <Table.Header>
+                    <Table.Row borderColor="gray.250">
+                      <Table.ColumnHeader color="gray.500" borderColor="gray.200" py={4}>Loan ID</Table.ColumnHeader>
+                      <Table.ColumnHeader color="gray.500" borderColor="gray.200" py={4}>Client Name</Table.ColumnHeader>
+                      <Table.ColumnHeader color="gray.500" borderColor="gray.200" py={4}>Principal</Table.ColumnHeader>
+                      <Table.ColumnHeader color="gray.500" borderColor="gray.200" py={4}>Interest</Table.ColumnHeader>
+                      <Table.ColumnHeader color="gray.500" borderColor="gray.200" py={4}>Term</Table.ColumnHeader>
+                      <Table.ColumnHeader color="gray.500" borderColor="gray.200" py={4}>Applied Date</Table.ColumnHeader>
+                      <Table.ColumnHeader color="gray.500" borderColor="gray.200" py={4}>Status</Table.ColumnHeader>
+                    </Table.Row>
+                  </Table.Header>
+                  <Table.Body>
                     {loans.length === 0 ? (
-                      <tr>
-                        <td colSpan={7} style={{ ...styles.td, textAlign: 'center', padding: '3.5rem 1rem', color: 'var(--text-muted)' }}>
+                      <Table.Row borderColor="gray.100">
+                        <Table.Cell colSpan={7} textAlign="center" py={12} color="gray.400" borderColor="transparent">
                           No active loans found. Click "New Loan" to create your first tracking profile.
-                        </td>
-                      </tr>
+                        </Table.Cell>
+                      </Table.Row>
                     ) : (
                       loans.map((loan: any) => (
-                        <tr key={loan.id} style={styles.tr}>
-                          <td style={{ ...styles.td, fontWeight: '700', color: '#818cf8' }}>{loan.id}</td>
-                          <td style={{ ...styles.td, color: '#fff', fontWeight: '500' }}>{loan.client}</td>
-                          <td style={{ ...styles.td, color: '#fff' }}>${loan.amount.toLocaleString()}</td>
-                          <td style={styles.td}>{loan.interest}%</td>
-                          <td style={styles.td}>{loan.term}</td>
-                          <td style={styles.td}>{loan.date}</td>
-                          <td style={styles.td}>
-                            <span style={{
-                              ...styles.statusTag,
-                              ...(loan.status === 'Active' ? styles.statusActive : {}),
-                              ...(loan.status === 'Pending' ? styles.statusPending : {}),
-                              ...(loan.status === 'Paid' ? styles.statusPaid : {}),
-                            }}>
-                              {loan.status}
-                            </span>
-                          </td>
-                        </tr>
+                        <Table.Row key={loan.id} borderColor="gray.100">
+                          <Table.Cell color="indigo.600" fontWeight="bold">{loan.id}</Table.Cell>
+                          <Table.Cell color="gray.800" fontWeight="medium">{loan.client}</Table.Cell>
+                          <Table.Cell color="gray.800">${loan.amount.toLocaleString()}</Table.Cell>
+                          <Table.Cell>{loan.interest}%</Table.Cell>
+                          <Table.Cell>{loan.term}</Table.Cell>
+                          <Table.Cell>{loan.date}</Table.Cell>
+                          <Table.Cell>{loan.status}</Table.Cell>
+                        </Table.Row>
                       ))
                     )}
-                  </tbody>
-                </table>
-              </div>
-            </section>
+                  </Table.Body>
+                </Table.Root>
+              </Box>
+            </Box>
           </>
         )}
-      </main>
-    </div>
+      </Box>
+    </Flex>
   );
 }
-
-const styles: Record<string, React.CSSProperties> = {
-  dashboardContainer: {
-    display: 'flex',
-    minHeight: '100vh',
-    background: '#04060e',
-  },
-  sidebar: {
-    width: '260px',
-    borderRight: '1px solid var(--border-light)',
-    display: 'flex',
-    flexDirection: 'column',
-    padding: '2rem 1.5rem',
-    position: 'fixed',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    zIndex: 10,
-    borderRadius: 0,
-    backdropFilter: 'blur(30px)',
-    background: 'rgba(7, 9, 21, 0.7)',
-  },
-  sidebarHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.75rem',
-    marginBottom: '3rem',
-  },
-  sidebarBrand: {
-    fontSize: '1.25rem',
-    fontWeight: '800',
-    color: '#fff',
-    letterSpacing: '-0.02em',
-    fontFamily: 'var(--font-heading)',
-  },
-  nav: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.5rem',
-    flex: 1,
-  },
-  navLink: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.75rem',
-    padding: '0.8rem 1rem',
-    borderRadius: '10px',
-    color: 'var(--text-secondary)',
-    textDecoration: 'none',
-    fontSize: '0.95rem',
-    fontWeight: '500',
-    transition: 'all var(--transition-fast)',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    width: '100%',
-    textAlign: 'left',
-  },
-  navLinkActive: {
-    background: 'var(--primary-gradient)',
-    color: '#fff',
-    boxShadow: '0 4px 15px rgba(99, 102, 241, 0.25)',
-  },
-  sidebarFooter: {
-    marginTop: 'auto',
-  },
-  logoutBtn: {
-    width: '100%',
-    justifyContent: 'center',
-  },
-  mainContent: {
-    flex: 1,
-    marginLeft: '260px',
-    padding: '2.5rem 3rem',
-    minHeight: '100vh',
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '2rem',
-    gap: '2rem',
-  },
-  welcomeText: {
-    fontSize: '2.25rem',
-    fontWeight: '800',
-    letterSpacing: '-0.03em',
-    color: '#fff',
-    marginBottom: '0.25rem',
-  },
-  headerSubtitle: {
-    fontSize: '0.95rem',
-    color: 'var(--text-secondary)',
-  },
-  headerActions: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '1rem',
-  },
-  profileBadge: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.75rem',
-    padding: '0.5rem 1rem 0.5rem 0.5rem',
-    borderRadius: '40px',
-    background: 'rgba(255, 255, 255, 0.02)',
-  },
-  avatar: {
-    width: '38px',
-    height: '38px',
-    borderRadius: '50%',
-    border: '2px solid rgba(99, 102, 241, 0.4)',
-    objectFit: 'cover',
-  },
-  avatarPlaceholder: {
-    width: '38px',
-    height: '38px',
-    borderRadius: '50%',
-    background: 'var(--primary-gradient)',
-    color: '#fff',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontWeight: '700',
-    fontSize: '1rem',
-  },
-  profileText: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  profileName: {
-    fontSize: '0.85rem',
-    fontWeight: '700',
-    color: '#fff',
-    lineHeight: '1.2',
-  },
-  profileEmail: {
-    fontSize: '0.75rem',
-    color: 'var(--text-muted)',
-  },
-  syncAlert: {
-    marginBottom: '2rem',
-    boxShadow: '0 4px 15px rgba(16, 185, 129, 0.08)',
-  },
-  statsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-    gap: '1.5rem',
-    marginBottom: '2.5rem',
-  },
-  statCard: {
-    padding: '1.5rem',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.75rem',
-  },
-  statHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  statLabel: {
-    fontSize: '0.9rem',
-    fontWeight: '600',
-    color: 'var(--text-secondary)',
-  },
-  statIconContainer: {
-    width: '36px',
-    height: '36px',
-    borderRadius: '10px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  statVal: {
-    fontSize: '2rem',
-    fontWeight: '800',
-    color: '#fff',
-    letterSpacing: '-0.02em',
-    fontFamily: 'var(--font-heading)',
-  },
-  statChange: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    fontSize: '0.8rem',
-  },
-  statPeriod: {
-    color: 'var(--text-muted)',
-  },
-  tableSection: {
-    padding: '2rem',
-  },
-  tableHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '1.5rem',
-    gap: '1rem',
-  },
-  tableTitle: {
-    fontSize: '1.25rem',
-    fontWeight: '700',
-    color: '#fff',
-    marginBottom: '0.25rem',
-  },
-  tableSubtitle: {
-    fontSize: '0.85rem',
-    color: 'var(--text-secondary)',
-  },
-  createBtn: {
-    fontSize: '0.85rem',
-    padding: '0.6rem 1.2rem',
-  },
-  tableWrapper: {
-    width: '100%',
-    overflowX: 'auto',
-  },
-  table: {
-    width: '100%',
-    borderCollapse: 'collapse',
-    textAlign: 'left',
-  },
-  th: {
-    padding: '1rem',
-    borderBottom: '1px solid var(--border-light)',
-    fontSize: '0.75rem',
-    fontWeight: '700',
-    color: 'var(--text-secondary)',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-  },
-  tr: {
-    borderBottom: '1px solid rgba(255, 255, 255, 0.03)',
-    transition: 'background var(--transition-fast)',
-  },
-  td: {
-    padding: '1rem',
-    fontSize: '0.9rem',
-    color: 'var(--text-secondary)',
-  },
-  statusTag: {
-    display: 'inline-flex',
-    padding: '0.25rem 0.6rem',
-    borderRadius: '12px',
-    fontSize: '0.75rem',
-    fontWeight: '700',
-  },
-  statusActive: {
-    background: 'rgba(16, 185, 129, 0.12)',
-    color: '#34d399',
-    border: '1px solid rgba(16, 185, 129, 0.2)',
-  },
-  statusPending: {
-    background: 'rgba(245, 158, 11, 0.12)',
-    color: '#fbbf24',
-    border: '1px solid rgba(245, 158, 11, 0.2)',
-  },
-  statusPaid: {
-    background: 'rgba(59, 130, 246, 0.12)',
-    color: '#60a5fa',
-    border: '1px solid rgba(59, 130, 246, 0.2)',
-  },
-};
-
-// Add standard link hover effect
-const hoverStyle = document.createElement('style');
-hoverStyle.innerHTML = `
-  .nav-link-hover:hover {
-    background: rgba(255, 255, 255, 0.04) !important;
-    color: #fff !important;
-  }
-  @media (max-width: 992px) {
-    main {
-      margin-left: 0 !important;
-      padding: 1.5rem !important;
-    }
-    aside {
-      display: none !important;
-    }
-  }
-`;
-document.head.appendChild(hoverStyle);

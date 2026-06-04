@@ -1,6 +1,28 @@
 import React, { useState } from 'react';
 import { updateProfile, type Profile } from '../supabase';
-import { User, Mail, Phone, Save, CheckCircle, AlertTriangle, Image as ImageIcon, ArrowLeft } from 'lucide-react';
+import { 
+  User as UserIcon, 
+  Mail, 
+  Phone, 
+  Save, 
+  CheckCircle, 
+  AlertTriangle, 
+  Image as ImageIcon, 
+  ArrowLeft 
+} from 'lucide-react';
+import { 
+  Box, 
+  Flex, 
+  Grid, 
+  GridItem, 
+  Heading, 
+  Text, 
+  Button, 
+  Input, 
+  Image, 
+  VStack, 
+  HStack 
+} from '@chakra-ui/react';
 
 interface ProfilePageProps {
   user: any;
@@ -53,270 +75,219 @@ export function ProfilePage({ user, profile, onProfileUpdated, onBack }: Profile
   };
 
   return (
-    <div style={styles.container} className="animate-fade-in">
-      <div style={styles.header}>
-        <button onClick={onBack} style={styles.backBtn} className="btn-secondary">
-          <ArrowLeft size={16} /> Back to Dashboard
-        </button>
-        <h1 style={styles.title}>Manage Profile</h1>
-        <p style={styles.subtitle}>View and update your personal identification details.</p>
-      </div>
+    <Box maxW="1000px" mx="auto" py={6} className="animate-fade-in">
+      {/* Header section */}
+      <Box mb={8}>
+        <Button 
+          onClick={onBack} 
+          variant="outline" 
+          borderColor="gray.200" 
+          color="gray.700" 
+          _hover={{ bg: "gray.50", color: "gray.900" }} 
+          mb={6}
+          gap={2}
+          size="sm"
+          boxShadow="sm"
+          bg="white"
+        >
+          <ArrowLeft size={14} /> Back to Dashboard
+        </Button>
+        <Heading size="lg" fontWeight="extrabold" color="gray.950" fontSize="3xl" letterSpacing="-0.02em" mb={1}>
+          Manage Profile
+        </Heading>
+        <Text fontSize="sm" color="gray.500">View and update your personal identification details.</Text>
+      </Box>
 
-      <div style={styles.cardGrid}>
-        {/* Left Card: Avatar Preview */}
-        <div className="glass-panel" style={styles.avatarCard}>
-          <div style={styles.avatarPreviewContainer}>
-            {avatarUrl ? (
-              <img src={avatarUrl} alt="Avatar Preview" style={styles.largeAvatar} onError={() => setAvatarUrl('')} />
-            ) : (
-              <div style={styles.largeAvatarPlaceholder}>
-                {(fullName[0] || user?.email?.[0] || 'U').toUpperCase()}
-              </div>
-            )}
-          </div>
-          
-          <h3 style={styles.userNameText}>{fullName || 'User Profile'}</h3>
-          <p style={styles.userRoleText}>Client Account / Admin</p>
-
-          <div style={styles.metadataList}>
-            <div style={styles.metadataItem}>
-              <span style={styles.metadataLabel}>Account ID:</span>
-              <span style={styles.metadataValue} title={user.id}>{user.id.slice(0, 12)}...</span>
-            </div>
-            <div style={styles.metadataItem}>
-              <span style={styles.metadataLabel}>Joined:</span>
-              <span style={styles.metadataValue}>
-                {profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : 'Today'}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Card: Profile Form */}
-        <div className="glass-panel" style={styles.formCard}>
-          <h3 style={styles.formTitle}>Edit Personal Details</h3>
-
-          {error && (
-            <div className="alert alert-danger animate-fade-in" style={{ fontSize: '0.85rem' }}>
-              <AlertTriangle size={18} style={{ flexShrink: 0 }} />
-              <div>{error}</div>
-            </div>
-          )}
-
-          {success && (
-            <div className="alert alert-success animate-fade-in" style={{ fontSize: '0.85rem' }}>
-              <CheckCircle size={18} style={{ flexShrink: 0 }} />
-              <div>Profile changes saved successfully! Your account headers have been updated.</div>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} style={styles.form}>
-            <div className="form-group">
-              <label className="form-label" style={styles.labelWithIcon}>
-                <User size={14} color="#a855f7" /> Full Name
-              </label>
-              <input
-                type="text"
-                className="form-input"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                placeholder="Jane Doe"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label" style={styles.labelWithIcon}>
-                <Mail size={14} color="#6366f1" /> Email Address
-              </label>
-              <input
-                type="email"
-                className="form-input"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="jane.doe@example.com"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label" style={styles.labelWithIcon}>
-                <Phone size={14} color="#10b981" /> Phone Number
-              </label>
-              <input
-                type="tel"
-                className="form-input"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="+1 (555) 019-2834"
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label" style={styles.labelWithIcon}>
-                <ImageIcon size={14} color="#f43f5e" /> Avatar Image URL
-              </label>
-              <input
-                type="url"
-                className="form-input"
-                value={avatarUrl}
-                onChange={(e) => setAvatarUrl(e.target.value)}
-                placeholder="https://images.unsplash.com/photo-..."
-              />
-            </div>
-
-            <button type="submit" className="btn-primary" disabled={loading} style={styles.saveBtn}>
-              {loading ? (
-                <div style={styles.loader}></div>
+      {/* Profile details grid */}
+      <Grid templateColumns={{ base: "1fr", md: "1fr 2fr" }} gap={8} alignItems="start">
+        {/* Left Side: Avatar Card */}
+        <GridItem>
+          <Box bg="white" border="1px solid" borderColor="gray.200" borderRadius="xl" p={8} textAlign="center" boxShadow="sm">
+            <Flex justify="center" mb={6}>
+              {avatarUrl ? (
+                <Image 
+                  src={avatarUrl} 
+                  alt="Avatar Preview" 
+                  borderRadius="full" 
+                  boxSize="120px" 
+                  border="4px solid" 
+                  borderColor="indigo.500" 
+                  objectFit="cover"
+                  onError={() => setAvatarUrl('')} 
+                />
               ) : (
-                <Save size={18} />
+                <Flex 
+                  borderRadius="full" 
+                  boxSize="120px" 
+                  bgGradient="to-tr" 
+                  gradientFrom="indigo.500" 
+                  gradientTo="purple.500" 
+                  align="center" 
+                  justify="center" 
+                  fontWeight="extrabold" 
+                  color="white"
+                  fontSize="3.5rem"
+                >
+                  {(fullName[0] || user?.email?.[0] || 'U').toUpperCase()}
+                </Flex>
               )}
-              {loading ? 'Saving details...' : 'Save Profile Details'}
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
+            </Flex>
+            
+            <Heading size="md" color="gray.900" fontSize="xl" mb={1}>{fullName || 'User Profile'}</Heading>
+            <Text fontSize="xs" fontWeight="bold" color="indigo.600" letterSpacing="0.05em" textTransform="uppercase" mb={6}>
+              Client Account / Admin
+            </Text>
+
+            <VStack align="stretch" gap={3} pt={5} borderTop="1px solid" borderColor="gray.200">
+              <Flex justify="space-between" fontSize="xs">
+                <Text color="gray.500">Account ID:</Text>
+                <Text color="gray.700" fontWeight="semibold" title={user.id}>{user.id.slice(0, 12)}...</Text>
+              </Flex>
+              <Flex justify="space-between" fontSize="xs">
+                <Text color="gray.500">Joined:</Text>
+                <Text color="gray.700" fontWeight="semibold">
+                  {profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : 'Today'}
+                </Text>
+              </Flex>
+            </VStack>
+          </Box>
+        </GridItem>
+
+        {/* Right Side: Profile edit form */}
+        <GridItem>
+          <Box bg="white" border="1px solid" borderColor="gray.200" borderRadius="xl" p={{ base: 6, md: 10 }} boxShadow="sm">
+            <Heading size="md" fontWeight="bold" color="gray.900" fontSize="xl" mb={6}>
+              Edit Personal Details
+            </Heading>
+
+            {error && (
+              <Flex align="center" gap={3} bg="red.50" border="1px solid" borderColor="red.200" color="red.800" p={4} borderRadius="xl" mb={6}>
+                <AlertTriangle size={18} style={{ flexShrink: 0 }} />
+                <Text fontSize="sm">{error}</Text>
+              </Flex>
+            )}
+
+            {success && (
+              <Flex align="center" gap={3} bg="green.50" border="1px solid" borderColor="green.200" color="green.300" p={4} borderRadius="xl" mb={6}>
+                <CheckCircle size={18} style={{ flexShrink: 0 }} />
+                <Text fontSize="sm">Profile changes saved successfully! Your account headers have been updated.</Text>
+              </Flex>
+            )}
+
+            <form onSubmit={handleSubmit}>
+              <VStack align="stretch" gap={5}>
+                <Box>
+                  <HStack mb={2} color="gray.600" fontSize="xs" fontWeight="bold" gap={2}>
+                    <UserIcon size={14} color="#8b5cf6" />
+                    <Text>FULL NAME</Text>
+                  </HStack>
+                  <Input
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="Jane Doe"
+                    bg="gray.50"
+                    borderColor="gray.250"
+                    color="gray.850"
+                    py={6}
+                    _focus={{ borderColor: "indigo.500", bg: "white" }}
+                    required
+                  />
+                </Box>
+
+                <Box>
+                  <HStack mb={2} color="gray.600" fontSize="xs" fontWeight="bold" gap={2}>
+                    <Mail size={14} color="#4f46e5" />
+                    <Text>EMAIL ADDRESS</Text>
+                  </HStack>
+                  <Input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="jane.doe@example.com"
+                    bg="gray.50"
+                    borderColor="gray.250"
+                    color="gray.850"
+                    py={6}
+                    _focus={{ borderColor: "indigo.500", bg: "white" }}
+                    required
+                  />
+                </Box>
+
+                <Box>
+                  <HStack mb={2} color="gray.600" fontSize="xs" fontWeight="bold" gap={2}>
+                    <Phone size={14} color="#059669" />
+                    <Text>PHONE NUMBER</Text>
+                  </HStack>
+                  <Input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="+1 (555) 019-2834"
+                    bg="gray.50"
+                    borderColor="gray.250"
+                    color="gray.850"
+                    py={6}
+                    _focus={{ borderColor: "indigo.500", bg: "white" }}
+                  />
+                </Box>
+
+                <Box>
+                  <HStack mb={2} color="gray.600" fontSize="xs" fontWeight="bold" gap={2}>
+                    <ImageIcon size={14} color="#e11d48" />
+                    <Text>AVATAR IMAGE URL</Text>
+                  </HStack>
+                  <Input
+                    type="url"
+                    value={avatarUrl}
+                    onChange={(e) => setAvatarUrl(e.target.value)}
+                    placeholder="https://images.unsplash.com/photo-..."
+                    bg="gray.50"
+                    borderColor="gray.250"
+                    color="gray.850"
+                    py={6}
+                    _focus={{ borderColor: "indigo.500", bg: "white" }}
+                  />
+                </Box>
+
+                <Button 
+                  type="submit" 
+                  disabled={loading} 
+                  bgGradient="to-r" 
+                  gradientFrom="indigo.600" 
+                  gradientTo="purple.600" 
+                  color="white" 
+                  w="100%" 
+                  py={6} 
+                  mt={2}
+                  borderRadius="lg" 
+                  _hover={{ bg: "indigo.700" }}
+                  gap={2}
+                >
+                  {loading ? (
+                    <Flex align="center" gap={2}>
+                      <Box 
+                        w="16px" 
+                        h="16px" 
+                        border="2px solid" 
+                        borderColor="whiteAlpha.300" 
+                        borderTopColor="white" 
+                        borderRadius="full" 
+                        animation="spin 1s linear infinite" 
+                      />
+                      Saving details...
+                    </Flex>
+                  ) : (
+                    <>
+                      <Save size={18} /> Save Profile Details
+                    </>
+                  )}
+                </Button>
+              </VStack>
+            </form>
+          </Box>
+        </GridItem>
+      </Grid>
+    </Box>
   );
 }
-
-const styles: Record<string, React.CSSProperties> = {
-  container: {
-    maxWidth: '1000px',
-    margin: '0 auto',
-    padding: '1.5rem 0',
-  },
-  header: {
-    marginBottom: '2rem',
-  },
-  backBtn: {
-    fontSize: '0.85rem',
-    padding: '0.5rem 1rem',
-    marginBottom: '1.5rem',
-  },
-  title: {
-    fontSize: '2.25rem',
-    fontWeight: '800',
-    color: '#fff',
-    letterSpacing: '-0.02em',
-    marginBottom: '0.25rem',
-  },
-  subtitle: {
-    fontSize: '0.95rem',
-    color: 'var(--text-secondary)',
-  },
-  cardGrid: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 2fr',
-    gap: '2rem',
-    alignItems: 'start',
-  },
-  avatarCard: {
-    padding: '2rem',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    textAlign: 'center',
-  },
-  avatarPreviewContainer: {
-    marginBottom: '1.5rem',
-  },
-  largeAvatar: {
-    width: '120px',
-    height: '120px',
-    borderRadius: '50%',
-    border: '4px solid rgba(99, 102, 241, 0.4)',
-    boxShadow: 'var(--shadow-glow)',
-    objectFit: 'cover',
-  },
-  largeAvatarPlaceholder: {
-    width: '120px',
-    height: '120px',
-    borderRadius: '50%',
-    background: 'var(--primary-gradient)',
-    color: '#fff',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontWeight: '800',
-    fontSize: '3.5rem',
-    boxShadow: 'var(--shadow-glow)',
-  },
-  userNameText: {
-    fontSize: '1.25rem',
-    fontWeight: '700',
-    color: '#fff',
-    marginBottom: '0.25rem',
-  },
-  userRoleText: {
-    fontSize: '0.85rem',
-    color: 'var(--primary-light)',
-    fontWeight: '600',
-    letterSpacing: '0.05em',
-    textTransform: 'uppercase',
-    marginBottom: '1.5rem',
-  },
-  metadataList: {
-    width: '100%',
-    borderTop: '1px solid var(--border-light)',
-    paddingTop: '1.25rem',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.75rem',
-  },
-  metadataItem: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    fontSize: '0.85rem',
-  },
-  metadataLabel: {
-    color: 'var(--text-muted)',
-  },
-  metadataValue: {
-    color: 'var(--text-primary)',
-    fontWeight: '600',
-  },
-  formCard: {
-    padding: '2.5rem',
-  },
-  formTitle: {
-    fontSize: '1.25rem',
-    fontWeight: '700',
-    color: '#fff',
-    marginBottom: '1.5rem',
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1.25rem',
-  },
-  labelWithIcon: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-  },
-  saveBtn: {
-    height: '46px',
-    justifyContent: 'center',
-    marginTop: '0.5rem',
-  },
-  loader: {
-    width: '16px',
-    height: '16px',
-    border: '2px solid rgba(255,255,255,0.2)',
-    borderTop: '2px solid #fff',
-    borderRadius: '50%',
-    animation: 'spin 1s linear infinite',
-  },
-};
-
-// Responsiveness adjustments for smaller devices
-const mediaStyles = document.createElement('style');
-mediaStyles.innerHTML = `
-  @media (max-width: 768px) {
-    .setup-container + div, .dashboard-container, .cardGrid {
-      grid-template-columns: 1fr !important;
-    }
-  }
-`;
-document.head.appendChild(mediaStyles);
