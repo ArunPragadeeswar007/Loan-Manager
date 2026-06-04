@@ -101,3 +101,95 @@ export async function updateProfile(
   }
   return data as Profile;
 }
+
+export interface Loan {
+  id: string;
+  customer_id: string;
+  loan_number: string;
+  loan_type: string;
+  loan_amount: number;
+  tenure: number;
+  installment_start_date: string;
+  interest_type: 'Fixed' | 'Floating';
+  roi: number;
+  status: 'Active' | 'Pending' | 'Paid';
+  created_at?: string;
+  updated_at?: string;
+}
+
+/**
+ * Fetches all loans belonging to a customer.
+ */
+export async function fetchLoans(customerId: string): Promise<Loan[]> {
+  const { data, error } = await supabase
+    .from('loans')
+    .select('*')
+    .eq('customer_id', customerId)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching loans:', error.message);
+    throw error;
+  }
+  return (data || []) as Loan[];
+}
+
+/**
+ * Creates a new loan record in the database.
+ */
+export async function createLoan(
+  loan: Omit<Loan, 'id' | 'created_at' | 'updated_at'>
+): Promise<Loan> {
+  const { data, error } = await supabase
+    .from('loans')
+    .insert([loan])
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error creating loan:', error.message);
+    throw error;
+  }
+  return data as Loan;
+}
+
+/**
+ * Updates an existing loan record in the database.
+ */
+export async function updateLoan(
+  loanId: string, 
+  updates: Partial<Omit<Loan, 'id' | 'customer_id' | 'created_at' | 'updated_at'>>
+): Promise<Loan> {
+  const { data, error } = await supabase
+    .from('loans')
+    .update({
+      ...updates,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', loanId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating loan:', error.message);
+    throw error;
+  }
+  return data as Loan;
+}
+
+/**
+ * Deletes a loan record from the database.
+ */
+export async function deleteLoan(loanId: string): Promise<void> {
+  const { error } = await supabase
+    .from('loans')
+    .delete()
+    .eq('id', loanId);
+
+  if (error) {
+    console.error('Error deleting loan:', error.message);
+    throw error;
+  }
+}
+
+
