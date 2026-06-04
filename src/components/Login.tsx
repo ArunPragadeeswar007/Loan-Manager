@@ -1,22 +1,12 @@
 import React, { useState } from 'react';
 import { supabase } from '../supabase';
-import { ShieldCheck, Activity, Sparkles, HelpCircle } from 'lucide-react';
+import { ShieldCheck, Activity, Sparkles } from 'lucide-react';
 
-interface LoginProps {
-  onShowSetup: () => void;
-  isConfigured: boolean;
-}
-
-export function Login({ onShowSetup, isConfigured }: LoginProps) {
+export function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleGoogleLogin = async () => {
-    if (!isConfigured) {
-      setError("Supabase configuration is missing. Click 'Developer Settings' to configure.");
-      return;
-    }
-    
     try {
       setLoading(true);
       setError(null);
@@ -46,23 +36,23 @@ export function Login({ onShowSetup, isConfigured }: LoginProps) {
         <div className="ambient-blob-3"></div>
       </div>
 
-      <div style={styles.contentWrapper}>
+      <div className="login-content-wrapper" style={styles.contentWrapper}>
         {/* Left Side: App Pitch / Info Panel */}
-        <div style={styles.infoPanel} className="animate-slide-up">
-          <div style={styles.logoBadge}>
+        <div style={styles.infoPanel} className="login-info-panel animate-slide-up">
+          <div style={styles.logoBadge} className="login-logo-badge">
             <Activity size={18} color="#6366f1" />
             <span>LOAN MANAGER PRO</span>
           </div>
 
-          <h2 style={styles.infoTitle}>
+          <h2 style={styles.infoTitle} className="login-info-title">
             Manage and track <span className="text-gradient-primary">loans</span> with total clarity.
           </h2>
           
-          <p style={styles.infoDesc}>
+          <p style={styles.infoDesc} className="login-info-desc">
             A secure and premium platform built to streamline loan applications, interest calculations, payments, and client profile management.
           </p>
 
-          <div style={styles.featuresList}>
+          <div style={styles.featuresList} className="login-features-list">
             <div style={styles.featureItem}>
               <div style={styles.featureIcon}>
                 <Sparkles size={16} color="#c084fc" />
@@ -86,7 +76,7 @@ export function Login({ onShowSetup, isConfigured }: LoginProps) {
         </div>
 
         {/* Right Side: Login Card */}
-        <div className="glass-panel glass-panel-glow animate-slide-up" style={styles.card}>
+        <div className="glass-panel glass-panel-glow login-card animate-slide-up" style={styles.card}>
           <div style={styles.cardHeader}>
             <h1 style={styles.cardTitle}>Welcome back</h1>
             <p style={styles.cardSubtitle}>Sign in to access your dashboard</p>
@@ -116,17 +106,6 @@ export function Login({ onShowSetup, isConfigured }: LoginProps) {
                 </svg>
               )}
               {loading ? 'Connecting...' : 'Sign in with Google'}
-            </button>
-
-            <div style={styles.divider}>
-              <span style={styles.dividerLine}></span>
-              <span style={styles.dividerText}>Developer Options</span>
-              <span style={styles.dividerLine}></span>
-            </div>
-
-            <button onClick={onShowSetup} className="btn-secondary" style={styles.devBtn}>
-              <HelpCircle size={16} />
-              Setup Guide & Settings
             </button>
           </div>
 
@@ -301,13 +280,43 @@ styleElement.innerHTML = `
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
-  @media (max-width: 768px) {
-    .login-container > div {
+  @media (max-width: 900px) {
+    .login-content-wrapper {
       flex-direction: column !important;
-      gap: 2rem !important;
+      gap: 2.5rem !important;
+      align-items: stretch !important;
+      max-width: 520px !important;
+      padding: 0 0.5rem;
     }
-    .login-container h2 {
-      font-size: 1.8rem !important;
+    .login-info-panel {
+      text-align: center;
+      align-items: center;
+    }
+    .login-logo-badge {
+      align-self: center !important;
+    }
+    .login-info-title {
+      font-size: 2rem !important;
+      line-height: 1.25 !important;
+    }
+    .login-info-desc {
+      font-size: 0.95rem !important;
+    }
+    .login-features-list {
+      align-items: stretch;
+      text-align: left;
+    }
+    .login-card {
+      max-width: 100% !important;
+      padding: 2rem !important;
+    }
+  }
+  @media (max-width: 480px) {
+    .login-info-title {
+      font-size: 1.75rem !important;
+    }
+    .login-card {
+      padding: 1.5rem !important;
     }
   }
 `;
