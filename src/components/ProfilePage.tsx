@@ -75,7 +75,7 @@ export function ProfilePage({ user, profile, onProfileUpdated, onBack }: Profile
   };
 
   return (
-    <Box maxW="1000px" mx="auto" py={6} className="animate-fade-in">
+    <Box maxW="1000px" mx="auto" py={6} px={{ base: 4, sm: 6, lg: 0 }} className="animate-fade-in">
       {/* Header section */}
       <Box mb={8}>
         <Button 
@@ -92,14 +92,14 @@ export function ProfilePage({ user, profile, onProfileUpdated, onBack }: Profile
         >
           <ArrowLeft size={14} /> Back to Dashboard
         </Button>
-        <Heading size="lg" fontWeight="extrabold" color="gray.950" fontSize="3xl" letterSpacing="-0.02em" mb={1}>
+        <Heading size="lg" fontWeight="extrabold" color="gray.950" fontSize={{ base: "2xl", sm: "3xl" }} letterSpacing="-0.02em" mb={1}>
           Manage Profile
         </Heading>
         <Text fontSize="sm" color="gray.500">View and update your personal identification details.</Text>
       </Box>
 
       {/* Profile details grid */}
-      <Grid templateColumns={{ base: "1fr", md: "1fr 2fr" }} gap={8} alignItems="start">
+      <Grid templateColumns={{ base: "1fr", lg: "1fr 2fr" }} gap={8} alignItems="start">
         {/* Left Side: Avatar Card */}
         <GridItem>
           <Box bg="white" border="1px solid" borderColor="gray.200" borderRadius="xl" p={8} textAlign="center" boxShadow="sm">
@@ -155,7 +155,7 @@ export function ProfilePage({ user, profile, onProfileUpdated, onBack }: Profile
 
         {/* Right Side: Profile edit form */}
         <GridItem>
-          <Box bg="white" border="1px solid" borderColor="gray.200" borderRadius="xl" p={{ base: 6, md: 10 }} boxShadow="sm">
+          <Box bg="white" border="1px solid" borderColor="gray.200" borderRadius="xl" p={{ base: 5, sm: 8, md: 10 }} boxShadow="sm">
             <Heading size="md" fontWeight="bold" color="gray.900" fontSize="xl" mb={6}>
               Edit Personal Details
             </Heading>

@@ -238,7 +238,7 @@ export function AddLoanPanel({ isOpen, onClose, customerId, onLoanAdded, loan }:
         <Flex 
           justify="space-between" 
           align="center" 
-          p={6} 
+          p={{ base: 4, sm: 6 }} 
           borderBottom="1px solid" 
           borderColor="gray.150"
         >
@@ -268,7 +268,7 @@ export function AddLoanPanel({ isOpen, onClose, customerId, onLoanAdded, loan }:
         <Box 
           flex={1} 
           overflowY="auto" 
-          p={6}
+          p={{ base: 4, sm: 6 }}
         >
           {error && (
             <Flex 
@@ -551,14 +551,14 @@ export function AddLoanPanel({ isOpen, onClose, customerId, onLoanAdded, loan }:
             </VStack>
 
             {/* Form Actions */}
-            <Flex gap={4} mt={8} borderTop="1px solid" borderColor="gray.100" pt={6}>
+            <Flex gap={3} mt={8} borderTop="1px solid" borderColor="gray.100" pt={6} direction={{ base: "column-reverse", sm: "row" }}>
               <Button
                 variant="outline"
                 borderColor="gray.200"
                 color="gray.700"
                 _hover={{ bg: "gray.50" }}
                 onClick={onClose}
-                flex={1}
+                w="100%"
                 py={6}
               >
                 Cancel
@@ -571,12 +571,12 @@ export function AddLoanPanel({ isOpen, onClose, customerId, onLoanAdded, loan }:
                 gradientTo="purple.600"
                 color="white"
                 _hover={{ bg: "indigo.700" }}
-                flex={2}
+                w="100%"
                 py={6}
                 gap={2}
               >
                 {loading ? (
-                  <Flex align="center" gap={2}>
+                  <Flex align="center" gap={2} justify="center">
                     <Box 
                       w="16px" 
                       h="16px" 

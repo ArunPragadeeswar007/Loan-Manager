@@ -12,7 +12,9 @@ import {
   User,
   Users,
   Pencil,
-  Trash2
+  Trash2,
+  Menu,
+  X
 } from 'lucide-react';
 import { 
   Box, 
@@ -44,6 +46,7 @@ export function Dashboard({ user, profile, onLogout, onProfileUpdated }: Dashboa
   const [isAddLoanOpen, setIsAddLoanOpen] = useState(false);
   const [selectedLoan, setSelectedLoan] = useState<Loan | null>(null);
   const [loansLoading, setLoansLoading] = useState(true);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
   useEffect(() => {
     async function loadLoans() {
@@ -157,6 +160,163 @@ export function Dashboard({ user, profile, onLogout, onProfileUpdated }: Dashboa
 
   return (
     <Flex minH="100vh" bg="#F4F6FA" color="gray.700" fontFamily="body">
+      {/* Mobile Navigation Drawer Overlay & Content */}
+      {isMobileNavOpen && (
+        <>
+          <Box
+            position="fixed"
+            top={0}
+            left={0}
+            right={0}
+            bottom={0}
+            bg="blackAlpha.600"
+            backdropFilter="blur(4px)"
+            zIndex={100}
+            onClick={() => setIsMobileNavOpen(false)}
+          />
+          <Box
+            position="fixed"
+            top={0}
+            left={0}
+            bottom={0}
+            w="280px"
+            bg="white"
+            boxShadow="2xl"
+            zIndex={101}
+            display={{ base: "flex", lg: "none" }}
+            flexDirection="column"
+            p={6}
+            animation="slideInLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards"
+          >
+            <style dangerouslySetInnerHTML={{__html: `
+              @keyframes slideInLeft {
+                from { transform: translateX(-100%); }
+                to { transform: translateX(0); }
+              }
+            `}} />
+            <Flex justify="space-between" align="center" mb={8}>
+              <Flex align="center" gap={3}>
+                <Briefcase size={22} color="#4f46e5" />
+                <Heading size="xs" fontWeight="bold" color="gray.900" fontSize="xl" letterSpacing="-0.02em">
+                  LoanManager
+                </Heading>
+              </Flex>
+              <Button
+                onClick={() => setIsMobileNavOpen(false)}
+                variant="ghost"
+                borderRadius="full"
+                p={0}
+                minW="32px"
+                h="32px"
+                color="gray.500"
+                _hover={{ bg: "gray.100", color: "gray.900" }}
+              >
+                <X size={18} />
+              </Button>
+            </Flex>
+
+            <VStack align="stretch" gap={2} flex={1}>
+              <Button 
+                onClick={() => { setActiveTab('dashboard'); setIsMobileNavOpen(false); }} 
+                justifyContent="flex-start" 
+                gap={3} 
+                bg={activeTab === 'dashboard' ? 'indigo.50' : 'transparent'} 
+                color={activeTab === 'dashboard' ? 'indigo.700' : 'gray.600'} 
+                borderRadius="lg" 
+                px={4} 
+                py={6}
+                _hover={{ bg: 'indigo.50', color: 'indigo.700' }}
+                variant="ghost"
+              >
+                <Activity size={18} /> 
+                <Text fontWeight={activeTab === 'dashboard' ? "bold" : "medium"} fontSize="sm">Dashboard</Text>
+              </Button>
+              
+              <Button 
+                onClick={() => { setActiveTab('profile'); setIsMobileNavOpen(false); }} 
+                justifyContent="flex-start" 
+                gap={3} 
+                bg={activeTab === 'profile' ? 'indigo.50' : 'transparent'} 
+                color={activeTab === 'profile' ? 'indigo.700' : 'gray.600'} 
+                borderRadius="lg" 
+                px={4} 
+                py={6}
+                _hover={{ bg: 'indigo.50', color: 'indigo.700' }}
+                variant="ghost"
+              >
+                <User size={18} /> 
+                <Text fontWeight={activeTab === 'profile' ? "bold" : "medium"} fontSize="sm">Profile</Text>
+              </Button>
+
+              <Button 
+                justifyContent="flex-start" 
+                gap={3} 
+                bg="transparent" 
+                color="gray.300" 
+                borderRadius="lg" 
+                px={4} 
+                py={6}
+                disabled 
+                opacity={0.4} 
+                cursor="not-allowed"
+                variant="ghost"
+              >
+                <DollarSign size={18} /> 
+                <Text fontWeight="medium" fontSize="sm">Loans</Text>
+              </Button>
+              
+              <Button 
+                justifyContent="flex-start" 
+                gap={3} 
+                bg="transparent" 
+                color="gray.300" 
+                borderRadius="lg" 
+                px={4} 
+                py={6}
+                disabled 
+                opacity={0.4} 
+                cursor="not-allowed"
+                variant="ghost"
+              >
+                <Users size={18} /> 
+                <Text fontWeight="medium" fontSize="sm">Clients</Text>
+              </Button>
+              
+              <Button 
+                justifyContent="flex-start" 
+                gap={3} 
+                bg="transparent" 
+                color="gray.300" 
+                borderRadius="lg" 
+                px={4} 
+                py={6}
+                disabled 
+                opacity={0.4} 
+                cursor="not-allowed"
+                variant="ghost"
+              >
+                <Settings size={18} /> 
+                <Text fontWeight="medium" fontSize="sm">Settings</Text>
+              </Button>
+            </VStack>
+
+            <Box pt={4} borderTop="1px solid" borderColor="gray.100">
+              <Button 
+                onClick={handleLogout} 
+                variant="outline" 
+                borderColor="gray.200" 
+                color="gray.600" 
+                _hover={{ bg: "gray.50", color: "gray.900" }} 
+                w="100%"
+                gap={2}
+              >
+                <LogOut size={16} /> Logout
+              </Button>
+            </Box>
+          </Box>
+        </>
+      )}
+
       {/* Sidebar Navigation */}
       <Box 
         w="260px" 
@@ -169,7 +329,7 @@ export function Dashboard({ user, profile, onLogout, onProfileUpdated }: Dashboa
         bottom={0} 
         left={0} 
         zIndex={10}
-        display={{ base: "none", md: "flex" }} 
+        display={{ base: "none", lg: "flex" }} 
         flexDirection="column"
         boxShadow="sm"
       >
@@ -283,11 +443,64 @@ export function Dashboard({ user, profile, onLogout, onProfileUpdated }: Dashboa
       {/* Main Content Area */}
       <Box 
         flex={1} 
-        ml={{ base: 0, md: "260px" }} 
-        p={{ base: 6, md: 10 }} 
+        ml={{ base: 0, lg: "260px" }} 
+        p={{ base: 4, sm: 6, lg: 10 }} 
         bg="#F4F6FA" 
         minH="100vh"
       >
+        {/* Mobile Header Bar */}
+        <Flex
+          display={{ base: "flex", lg: "none" }}
+          justify="space-between"
+          align="center"
+          p={4}
+          bg="white"
+          borderBottom="1px solid"
+          borderColor="gray.200"
+          position="sticky"
+          top={0}
+          zIndex={20}
+          mx={{ base: -4, sm: -6 }}
+          mt={{ base: -4, sm: -6 }}
+          mb={6}
+          boxShadow="sm"
+        >
+          <Flex align="center" gap={2}>
+            <Button
+              onClick={() => setIsMobileNavOpen(true)}
+              variant="ghost"
+              p={2}
+              h="36px"
+              w="36px"
+              borderRadius="md"
+              color="gray.600"
+              _hover={{ bg: "gray.100" }}
+            >
+              <Menu size={20} />
+            </Button>
+            <Flex align="center" gap={2}>
+              <Briefcase size={18} color="#4f46e5" />
+              <Heading size="xs" fontWeight="bold" color="gray.900" fontSize="lg" letterSpacing="-0.02em">
+                LoanManager
+              </Heading>
+            </Flex>
+          </Flex>
+
+          <HStack 
+            onClick={() => setActiveTab('profile')}
+            gap={2} 
+            cursor="pointer"
+          >
+            {avatarUrl ? (
+              <Image src={avatarUrl} alt={displayName} borderRadius="full" boxSize="32px" border="2px solid" borderColor="indigo.500" />
+            ) : (
+              <Flex borderRadius="full" boxSize="32px" bgGradient="to-tr" gradientFrom="indigo.500" gradientTo="purple.500" align="center" justify="center" fontWeight="bold" color="white" fontSize="xs">
+                {displayName[0].toUpperCase()}
+              </Flex>
+            )}
+          </HStack>
+        </Flex>
+
         {activeTab === 'profile' ? (
           <ProfilePage 
             user={user} 
@@ -306,7 +519,7 @@ export function Dashboard({ user, profile, onLogout, onProfileUpdated }: Dashboa
               mb={8}
             >
               <Box>
-                <Heading size="lg" fontWeight="extrabold" color="gray.950" fontSize="3xl" letterSpacing="-0.03em" mb={1}>
+                <Heading size="lg" fontWeight="extrabold" color="gray.950" fontSize={{ base: "2xl", sm: "3xl" }} letterSpacing="-0.03em" mb={1}>
                   Welcome back, <Text as="span" color="indigo.600">{displayName}</Text>!
                 </Heading>
                 <Text fontSize="sm" color="gray.500">Here is what's happening with your loan portfolios today.</Text>
@@ -326,6 +539,7 @@ export function Dashboard({ user, profile, onLogout, onProfileUpdated }: Dashboa
                 _hover={{ bg: "gray.50" }}
                 transition="background 0.2s"
                 boxShadow="sm"
+                display={{ base: "none", lg: "flex" }}
               >
                 {avatarUrl ? (
                   <Image src={avatarUrl} alt={displayName} borderRadius="full" boxSize="38px" border="2px solid" borderColor="indigo.500" />
@@ -389,8 +603,7 @@ export function Dashboard({ user, profile, onLogout, onProfileUpdated }: Dashboa
               </Box>
             </Grid>
 
-            {/* Loan Table Section */}
-            <Box bg="white" border="1px solid" borderColor="gray.200" p={8} borderRadius="xl" boxShadow="sm">
+            <Box bg="white" border="1px solid" borderColor="gray.200" p={{ base: 4, sm: 6, lg: 8 }} borderRadius="xl" boxShadow="sm">
               <Flex justify="space-between" align="center" mb={6} direction={{ base: "column", sm: "row" }} gap={4}>
                 <Box>
                   <Heading size="md" fontWeight="bold" color="gray.900" fontSize="xl" mb={1}>Recent Loan Activity</Heading>
@@ -407,12 +620,14 @@ export function Dashboard({ user, profile, onLogout, onProfileUpdated }: Dashboa
                   borderRadius="lg" 
                   _hover={{ bg: "indigo.700" }}
                   gap={2}
+                  w={{ base: "100%", sm: "auto" }}
                 >
                   <Plus size={16} /> New Loan
                 </Button>
               </Flex>
 
-              <Box overflowX="auto">
+              {/* Desktop Table View */}
+              <Box display={{ base: "none", lg: "block" }} overflowX="auto">
                 <Table.Root variant="line" size="md">
                   <Table.Header>
                     <Table.Row borderColor="gray.250">
@@ -522,6 +737,126 @@ export function Dashboard({ user, profile, onLogout, onProfileUpdated }: Dashboa
                     )}
                   </Table.Body>
                 </Table.Root>
+              </Box>
+
+              {/* Mobile/Tablet Card View */}
+              <Box display={{ base: "block", lg: "none" }}>
+                {loansLoading ? (
+                  <Flex align="center" justify="center" py={8} color="gray.400" gap={2}>
+                    <Box 
+                      w="18px" 
+                      h="18px" 
+                      border="2.5px solid rgba(99, 102, 241, 0.1)" 
+                      borderTopColor="#6366f1" 
+                      borderRadius="full" 
+                      animation="spin 1s linear infinite" 
+                    />
+                    Loading loans...
+                  </Flex>
+                ) : loans.length === 0 ? (
+                  <Text textAlign="center" py={8} color="gray.400" fontSize="sm">
+                    No active loans found. Click "New Loan" to create your first tracking profile.
+                  </Text>
+                ) : (
+                  <VStack align="stretch" gap={4}>
+                    {loans.map((loan: Loan) => {
+                      const statusColors = loan.status === 'Paid' 
+                        ? { bg: 'rgba(16, 185, 129, 0.1)', color: '#059669' }
+                        : loan.status === 'Active'
+                        ? { bg: 'rgba(99, 102, 241, 0.1)', color: '#4f46e5' }
+                        : { bg: 'rgba(245, 158, 11, 0.1)', color: '#d97706' };
+                      
+                      return (
+                        <Box 
+                          key={loan.id}
+                          bg="gray.50" 
+                          border="1px solid" 
+                          borderColor="gray.200" 
+                          borderRadius="lg" 
+                          p={4}
+                          _hover={{ borderColor: "indigo.300", bg: "white" }}
+                          transition="all 0.2s"
+                        >
+                          <Flex justify="space-between" align="center" mb={3}>
+                            <Text color="indigo.600" fontWeight="bold" fontSize="sm">
+                              {loan.loan_number}
+                            </Text>
+                            <Flex 
+                              as="span" 
+                              bg={statusColors.bg} 
+                              color={statusColors.color} 
+                              px={2.5} 
+                              py={0.5} 
+                              borderRadius="full" 
+                              fontSize="10px" 
+                              fontWeight="bold"
+                            >
+                              {loan.status}
+                            </Flex>
+                          </Flex>
+
+                          <Grid templateColumns="repeat(2, 1fr)" gap={3} fontSize="xs" mb={4}>
+                            <Box>
+                              <Text color="gray.400" fontWeight="semibold" mb={0.5}>LOAN TYPE</Text>
+                              <Text color="gray.850" fontWeight="semibold">{loan.loan_type}</Text>
+                            </Box>
+                            <Box>
+                              <Text color="gray.400" fontWeight="semibold" mb={0.5}>PRINCIPAL</Text>
+                              <Text color="gray.800" fontWeight="bold">
+                                {rupeeFormatter.format(loan.loan_amount)}
+                              </Text>
+                            </Box>
+                            <Box>
+                              <Text color="gray.400" fontWeight="semibold" mb={0.5}>TERM</Text>
+                              <Text color="gray.700">{loan.tenure} months</Text>
+                            </Box>
+                            <Box>
+                              <Text color="gray.400" fontWeight="semibold" mb={0.5}>INTEREST</Text>
+                              <Text color="gray.700">{loan.roi}% ({loan.interest_type})</Text>
+                            </Box>
+                            <Box gridColumn="span 2">
+                              <Text color="gray.400" fontWeight="semibold" mb={0.5}>START DATE</Text>
+                              <Text color="gray.700">
+                                {new Date(loan.installment_start_date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+                              </Text>
+                            </Box>
+                          </Grid>
+
+                          <Flex justify="flex-end" borderTop="1px solid" borderColor="gray.200" pt={3} gap={2}>
+                            <Button 
+                              size="xs" 
+                              variant="outline" 
+                              borderColor="gray.200"
+                              color="gray.600" 
+                              _hover={{ bg: "gray.100", color: "indigo.600" }} 
+                              onClick={() => { setSelectedLoan(loan); setIsAddLoanOpen(true); }}
+                              gap={1}
+                              px={3}
+                              h="28px"
+                              borderRadius="md"
+                            >
+                              <Pencil size={12} /> Edit
+                            </Button>
+                            <Button 
+                              size="xs" 
+                              variant="outline" 
+                              borderColor="gray.200"
+                              color="gray.500" 
+                              _hover={{ bg: "red.50", color: "red.600", borderColor: "red.100" }} 
+                              onClick={() => handleDeleteLoan(loan.id)}
+                              gap={1}
+                              px={3}
+                              h="28px"
+                              borderRadius="md"
+                            >
+                              <Trash2 size={12} /> Delete
+                            </Button>
+                          </Flex>
+                        </Box>
+                      );
+                    })}
+                  </VStack>
+                )}
               </Box>
             </Box>
           </>
