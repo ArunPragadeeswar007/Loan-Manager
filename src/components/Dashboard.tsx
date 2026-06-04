@@ -56,7 +56,7 @@ export function Dashboard({ user, profile, onLogout, onProfileUpdated }: Dashboa
       <aside style={styles.sidebar} className="glass-panel">
         <div style={styles.sidebarHeader}>
           <Briefcase size={22} color="#818cf8" />
-          <span style={styles.sidebarBrand}>LoanManager</span>
+          <span style={styles.sidebarBrand}>LoanManager PRO</span>
         </div>
         
         <nav style={styles.nav}>
