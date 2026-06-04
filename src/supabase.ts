@@ -1,33 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Support localStorage configuration for developer setup ease
-const getSupabaseConfig = () => {
-  const localUrl = localStorage.getItem('LOAN_MANAGER_SUPABASE_URL');
-  const localKey = localStorage.getItem('LOAN_MANAGER_SUPABASE_ANON_KEY');
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
-  const url = localUrl || import.meta.env.VITE_SUPABASE_URL || '';
-  const key = localKey || import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-
-  return { url, key, isConfigured: !!(url && key) };
-};
-
-const { url, key, isConfigured } = getSupabaseConfig();
-
-// Initialize the Supabase client
-// If not configured, we create a dummy client or wait. We check isConfigured in App.tsx to guide the UI.
-export const supabase = createClient(
-  url || 'https://placeholder.supabase.co',
-  key || 'placeholder-key',
-  {
-    auth: {
-      autoRefreshToken: true,
-      persistSession: true,
-      detectSessionInUrl: true,
-    },
-  }
-);
-
-export { isConfigured };
+// Initialize the Supabase client using Vite environment variables
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true,
+  },
+});
 
 // Profile helper functions
 export interface Profile {
@@ -44,8 +27,6 @@ export interface Profile {
  * Fetches the user profile from the database.
  */
 export async function getProfile(userId: string): Promise<Profile | null> {
-  if (!isConfigured) return null;
-  
   const { data, error } = await supabase
     .from('profiles')
     .select('*')
@@ -64,8 +45,6 @@ export async function getProfile(userId: string): Promise<Profile | null> {
  * If the database trigger didn't run, this inserts the profile manually.
  */
 export async function ensureUserProfile(userId: string, metadata: any, email?: string): Promise<Profile | null> {
-  if (!isConfigured) return null;
-
   try {
     const existing = await getProfile(userId);
     if (existing) return existing;
@@ -106,8 +85,6 @@ export async function updateProfile(
   userId: string, 
   updates: Partial<Omit<Profile, 'id' | 'created_at'>>
 ): Promise<Profile | null> {
-  if (!isConfigured) return null;
-
   const { data, error } = await supabase
     .from('profiles')
     .update({

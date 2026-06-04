@@ -1,22 +1,12 @@
 import React, { useState } from 'react';
 import { supabase } from '../supabase';
-import { ShieldCheck, Activity, Sparkles, HelpCircle } from 'lucide-react';
+import { ShieldCheck, Activity, Sparkles } from 'lucide-react';
 
-interface LoginProps {
-  onShowSetup: () => void;
-  isConfigured: boolean;
-}
-
-export function Login({ onShowSetup, isConfigured }: LoginProps) {
+export function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleGoogleLogin = async () => {
-    if (!isConfigured) {
-      setError("Supabase configuration is missing. Click 'Developer Settings' to configure.");
-      return;
-    }
-    
     try {
       setLoading(true);
       setError(null);
@@ -116,17 +106,6 @@ export function Login({ onShowSetup, isConfigured }: LoginProps) {
                 </svg>
               )}
               {loading ? 'Connecting...' : 'Sign in with Google'}
-            </button>
-
-            <div style={styles.divider}>
-              <span style={styles.dividerLine}></span>
-              <span style={styles.dividerText}>Developer Options</span>
-              <span style={styles.dividerLine}></span>
-            </div>
-
-            <button onClick={onShowSetup} className="btn-secondary" style={styles.devBtn}>
-              <HelpCircle size={16} />
-              Setup Guide & Settings
             </button>
           </div>
 

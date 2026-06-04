@@ -1,35 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { supabase, isConfigured as initialConfigured, ensureUserProfile, type Profile } from './supabase';
-import { SetupAssistant } from './components/SetupAssistant';
+import { supabase, ensureUserProfile, type Profile } from './supabase';
 import { Login } from './components/Login';
 import { Dashboard } from './components/Dashboard';
 
 function App() {
-  const [configured, setConfigured] = useState(initialConfigured);
-  const [showSetup, setShowSetup] = useState(!initialConfigured);
   const [session, setSession] = useState<any>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Re-check configuration status when notified
-  const handleConfigSaved = () => {
-    setConfigured(true);
-    setShowSetup(false);
-    // Reload the window to ensure Supabase client re-initializes with the correct settings
-    window.location.reload();
-  };
-
   useEffect(() => {
-    if (!configured) {
-      setLoading(false);
-      return;
-    }
-
-    // 1. Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session?.user) {
-        syncProfile(session.user);
+    // 1. Get initial session on mount
+    supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
+      setSession(initialSession);
+      if (initialSession?.user) {
+        syncProfile(initialSession.user);
       } else {
         setLoading(false);
       }
@@ -49,7 +33,7 @@ function App() {
     return () => {
       subscription.unsubscribe();
     };
-  }, [configured]);
+  }, []);
 
   // Helper to fetch/create profile
   const syncProfile = async (user: any) => {
@@ -85,12 +69,7 @@ function App() {
     );
   }
 
-  // 1. If showSetup is forced (keys missing or developer clicked config settings)
-  if (showSetup) {
-    return <SetupAssistant onConfigSaved={handleConfigSaved} />;
-  }
-
-  // 2. If authenticated, show dashboard
+  // 1. If authenticated, show dashboard
   if (session?.user) {
     return (
       <Dashboard 
@@ -102,13 +81,8 @@ function App() {
     );
   }
 
-  // 3. Otherwise, show login screen
-  return (
-    <Login 
-      onShowSetup={() => setShowSetup(true)} 
-      isConfigured={configured} 
-    />
-  );
+  // 2. Otherwise, show login screen
+  return <Login />;
 }
 
 const styles: Record<string, React.CSSProperties> = {
