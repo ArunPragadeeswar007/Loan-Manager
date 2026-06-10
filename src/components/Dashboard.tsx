@@ -31,6 +31,9 @@ import {
 } from '@chakra-ui/react';
 import { ProfilePage } from './ProfilePage';
 import { AddLoanPanel } from './AddLoanPanel';
+import { ReleaseNotesModal, CURRENT_RELEASE_VERSION } from './ReleaseNotesModal';
+import { LoansPanel } from './LoansPanel';
+import { LoanDetailPanel } from './LoanDetailPanel';
 
 
 interface DashboardProps {
@@ -41,12 +44,28 @@ interface DashboardProps {
 }
 
 export function Dashboard({ user, profile, onLogout, onProfileUpdated }: DashboardProps) {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'profile'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'profile' | 'loans' | 'loan-detail'>('dashboard');
+  const [detailLoan, setDetailLoan] = useState<Loan | null>(null);
   const [loans, setLoans] = useState<Loan[]>([]);
   const [isAddLoanOpen, setIsAddLoanOpen] = useState(false);
   const [selectedLoan, setSelectedLoan] = useState<Loan | null>(null);
   const [loansLoading, setLoansLoading] = useState(true);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [isReleaseModalOpen, setIsReleaseModalOpen] = useState(false);
+
+  useEffect(() => {
+    const localStorageKey = `loan-manager-seen-release-${user?.id || 'anonymous'}`;
+    const lastSeenVersion = localStorage.getItem(localStorageKey);
+    if (lastSeenVersion !== CURRENT_RELEASE_VERSION) {
+      setIsReleaseModalOpen(true);
+    }
+  }, [user?.id]);
+
+  const handleCloseReleaseModal = () => {
+    const localStorageKey = `loan-manager-seen-release-${user?.id || 'anonymous'}`;
+    localStorage.setItem(localStorageKey, CURRENT_RELEASE_VERSION);
+    setIsReleaseModalOpen(false);
+  };
 
   useEffect(() => {
     async function loadLoans() {
@@ -231,6 +250,22 @@ export function Dashboard({ user, profile, onLogout, onProfileUpdated }: Dashboa
                 <Activity size={18} /> 
                 <Text fontWeight={activeTab === 'dashboard' ? "bold" : "medium"} fontSize="sm">Dashboard</Text>
               </Button>
+
+              <Button 
+                onClick={() => { setActiveTab('loans'); setIsMobileNavOpen(false); }} 
+                justifyContent="flex-start" 
+                gap={3} 
+                bg={activeTab === 'loans' || activeTab === 'loan-detail' ? 'indigo.50' : 'transparent'} 
+                color={activeTab === 'loans' || activeTab === 'loan-detail' ? 'indigo.700' : 'gray.600'} 
+                borderRadius="lg" 
+                px={4} 
+                py={6}
+                _hover={{ bg: 'indigo.50', color: 'indigo.700' }}
+                variant="ghost"
+              >
+                <DollarSign size={18} /> 
+                <Text fontWeight={activeTab === 'loans' || activeTab === 'loan-detail' ? "bold" : "medium"} fontSize="sm">Loans</Text>
+              </Button>
               
               <Button 
                 onClick={() => { setActiveTab('profile'); setIsMobileNavOpen(false); }} 
@@ -246,23 +281,6 @@ export function Dashboard({ user, profile, onLogout, onProfileUpdated }: Dashboa
               >
                 <User size={18} /> 
                 <Text fontWeight={activeTab === 'profile' ? "bold" : "medium"} fontSize="sm">Profile</Text>
-              </Button>
-
-              <Button 
-                justifyContent="flex-start" 
-                gap={3} 
-                bg="transparent" 
-                color="gray.300" 
-                borderRadius="lg" 
-                px={4} 
-                py={6}
-                disabled 
-                opacity={0.4} 
-                cursor="not-allowed"
-                variant="ghost"
-              >
-                <DollarSign size={18} /> 
-                <Text fontWeight="medium" fontSize="sm">Loans</Text>
               </Button>
               
               <Button 
@@ -356,6 +374,22 @@ export function Dashboard({ user, profile, onLogout, onProfileUpdated }: Dashboa
             <Activity size={18} /> 
             <Text fontWeight={activeTab === 'dashboard' ? "bold" : "medium"} fontSize="sm">Dashboard</Text>
           </Button>
+
+          <Button 
+            onClick={() => setActiveTab('loans')} 
+            justifyContent="flex-start" 
+            gap={3} 
+            bg={activeTab === 'loans' || activeTab === 'loan-detail' ? 'indigo.50' : 'transparent'} 
+            color={activeTab === 'loans' || activeTab === 'loan-detail' ? 'indigo.700' : 'gray.600'} 
+            borderRadius="lg" 
+            px={4} 
+            py={6}
+            _hover={activeTab === 'loans' || activeTab === 'loan-detail' ? { bg: 'indigo.100' } : { bg: 'gray.100', color: 'gray.900' }}
+            variant="ghost"
+          >
+            <DollarSign size={18} /> 
+            <Text fontWeight={activeTab === 'loans' || activeTab === 'loan-detail' ? "bold" : "medium"} fontSize="sm">Loans</Text>
+          </Button>
           
           <Button 
             onClick={() => setActiveTab('profile')} 
@@ -371,23 +405,6 @@ export function Dashboard({ user, profile, onLogout, onProfileUpdated }: Dashboa
           >
             <User size={18} /> 
             <Text fontWeight={activeTab === 'profile' ? "bold" : "medium"} fontSize="sm">Profile</Text>
-          </Button>
-
-          <Button 
-            justifyContent="flex-start" 
-            gap={3} 
-            bg="transparent" 
-            color="gray.300" 
-            borderRadius="lg" 
-            px={4} 
-            py={6}
-            disabled 
-            opacity={0.4} 
-            cursor="not-allowed"
-            variant="ghost"
-          >
-            <DollarSign size={18} /> 
-            <Text fontWeight="medium" fontSize="sm">Loans</Text>
           </Button>
           
           <Button 
@@ -507,6 +524,20 @@ export function Dashboard({ user, profile, onLogout, onProfileUpdated }: Dashboa
             profile={profile} 
             onProfileUpdated={onProfileUpdated} 
             onBack={() => setActiveTab('dashboard')} 
+          />
+        ) : activeTab === 'loans' ? (
+          <LoansPanel
+            loans={loans}
+            loansLoading={loansLoading}
+            onViewDetail={(loan) => { setDetailLoan(loan); setActiveTab('loan-detail'); }}
+            onEditLoan={(loan) => { setSelectedLoan(loan); setIsAddLoanOpen(true); }}
+            onDeleteLoan={handleDeleteLoan}
+            onAddLoan={() => { setSelectedLoan(null); setIsAddLoanOpen(true); }}
+          />
+        ) : activeTab === 'loan-detail' && detailLoan ? (
+          <LoanDetailPanel
+            loan={detailLoan}
+            onBack={() => setActiveTab('loans')}
           />
         ) : (
           <>
@@ -871,6 +902,10 @@ export function Dashboard({ user, profile, onLogout, onProfileUpdated }: Dashboa
         customerId={user.id} 
         loan={selectedLoan}
         onLoanAdded={handleLoanSaved} 
+      />
+      <ReleaseNotesModal 
+        isOpen={isReleaseModalOpen}
+        onClose={handleCloseReleaseModal}
       />
     </Flex>
   );

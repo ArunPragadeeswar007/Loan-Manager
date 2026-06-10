@@ -49,9 +49,9 @@ export async function ensureUserProfile(userId: string, metadata: any, email?: s
     const existing = await getProfile(userId);
     if (existing) return existing;
 
-    const fullName = metadata.full_name || metadata.name || 'User';
-    const avatarUrl = metadata.avatar_url || null;
-    const phone = metadata.phone || null;
+    const fullName = metadata?.full_name || metadata?.name || 'User';
+    const avatarUrl = metadata?.avatar_url || null;
+    const phone = metadata?.phone || null;
 
     const newProfile: Omit<Profile, 'updated_at' | 'created_at'> = {
       id: userId,
@@ -140,6 +140,17 @@ export async function fetchLoans(customerId: string): Promise<Loan[]> {
 export async function createLoan(
   loan: Omit<Loan, 'id' | 'created_at' | 'updated_at'>
 ): Promise<Loan> {
+  // Proactively ensure the user profile exists in the database to satisfy the foreign key constraint
+  try {
+    const session = await supabase.auth.getSession();
+    const user = session.data.session?.user;
+    if (user && user.id === loan.customer_id) {
+      await ensureUserProfile(user.id, user.user_metadata, user.email);
+    }
+  } catch (err) {
+    console.warn('Non-fatal: Failed to pre-verify profile existence:', err);
+  }
+
   const { data, error } = await supabase
     .from('loans')
     .insert([loan])

@@ -123,6 +123,7 @@ export function AddLoanPanel({ isOpen, onClose, customerId, onLoanAdded, loan }:
 
   // Sync state with current loan edit model
   useEffect(() => {
+    setLoading(false);
     if (loan) {
       setLoanNumber(loan.loan_number);
       setLoanType(loan.loan_type);
@@ -266,29 +267,38 @@ export function AddLoanPanel({ isOpen, onClose, customerId, onLoanAdded, loan }:
 
         {/* Panel Body / Form */}
         <Box 
+          as="form" 
+          onSubmit={handleSubmit} 
+          display="flex" 
+          flexDirection="column" 
           flex={1} 
-          overflowY="auto" 
-          p={{ base: 4, sm: 6 }}
+          overflow="hidden"
+          minHeight={0}
         >
-          {error && (
-            <Flex 
-              align="center" 
-              gap={3} 
-              bg="red.50" 
-              border="1px solid" 
-              borderColor="red.200" 
-              color="red.800" 
-              p={4} 
-              borderRadius="xl" 
-              mb={6}
-            >
-              <AlertTriangle size={18} style={{ flexShrink: 0 }} />
-              <Text fontSize="sm">{error}</Text>
-            </Flex>
-          )}
+          <Box 
+            flex={1} 
+            minH={0}
+            overflowY="auto" 
+            p={{ base: 4, sm: 6 }}
+          >
+            {error && (
+              <Flex 
+                align="center" 
+                gap={3} 
+                bg="red.50" 
+                border="1px solid" 
+                borderColor="red.200" 
+                color="red.800" 
+                p={4} 
+                borderRadius="xl" 
+                mb={6}
+              >
+                <AlertTriangle size={18} style={{ flexShrink: 0 }} />
+                <Text fontSize="sm">{error}</Text>
+              </Flex>
+            )}
 
-          <form onSubmit={handleSubmit}>
-            <VStack align="stretch" gap={5}>
+              <VStack align="stretch" gap={5}>
               
               {/* Loan Number */}
               <Box>
@@ -549,53 +559,66 @@ export function AddLoanPanel({ isOpen, onClose, customerId, onLoanAdded, loan }:
                 </NativeSelectRoot>
               </Box>
             </VStack>
+          </Box>
 
-            {/* Form Actions */}
-            <Flex gap={3} mt={8} borderTop="1px solid" borderColor="gray.100" pt={6} direction={{ base: "column-reverse", sm: "row" }}>
-              <Button
-                variant="outline"
-                borderColor="gray.200"
-                color="gray.700"
-                _hover={{ bg: "gray.50" }}
-                onClick={onClose}
-                w="100%"
-                py={6}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={loading}
-                bgGradient="to-r"
-                gradientFrom="indigo.600"
-                gradientTo="purple.600"
-                color="white"
-                _hover={{ bg: "indigo.700" }}
-                w="100%"
-                py={6}
-                gap={2}
-              >
-                {loading ? (
-                  <Flex align="center" gap={2} justify="center">
-                    <Box 
-                      w="16px" 
-                      h="16px" 
-                      border="2px solid" 
-                      borderColor="whiteAlpha.300" 
-                      borderTopColor="white" 
-                      borderRadius="full" 
-                      animation="spin 1s linear infinite" 
-                    />
-                    {loan ? 'Updating Loan...' : 'Saving Loan...'}
-                  </Flex>
-                ) : (
-                  <>
-                    <Plus size={18} /> {loan ? 'Update Loan' : 'Save Loan'}
-                  </>
-                )}
-              </Button>
-            </Flex>
-          </form>
+          {/* Fixed Footer Actions — always visible and compact */}
+          <Flex 
+            gap={3} 
+            p={{ base: 4, sm: 6 }} 
+            borderTop="1px solid" 
+            borderColor="gray.100" 
+            bg="white"
+            direction="row"
+            flexShrink={0}
+          >
+            <Button
+              variant="outline"
+              borderColor="gray.200"
+              color="gray.700"
+              _hover={{ bg: "gray.50" }}
+              onClick={onClose}
+              w="100%"
+              h="44px"
+              fontSize="sm"
+              fontWeight="medium"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={loading}
+              bg="indigo.600"
+              bgGradient="to-r"
+              gradientFrom="indigo.600"
+              gradientTo="purple.600"
+              color="white"
+              _hover={{ bg: "indigo.750", bgGradient: "to-r", gradientFrom: "indigo.700", gradientTo: "purple.700" }}
+              w="100%"
+              h="44px"
+              fontSize="sm"
+              fontWeight="bold"
+              gap={2}
+            >
+              {loading ? (
+                <Flex align="center" gap={2} justify="center">
+                  <Box 
+                    w="16px" 
+                    h="16px" 
+                    border="2px solid" 
+                    borderColor="whiteAlpha.300" 
+                    borderTopColor="white" 
+                    borderRadius="full" 
+                    animation="spin 1s linear infinite" 
+                  />
+                  {loan ? 'Updating...' : 'Saving...'}
+                </Flex>
+              ) : (
+                <>
+                  <Plus size={16} /> {loan ? 'Update' : 'Save'} Loan
+                </>
+              )}
+            </Button>
+          </Flex>
         </Box>
       </Box>
     </>
