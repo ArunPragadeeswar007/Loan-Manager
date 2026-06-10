@@ -4,6 +4,43 @@ All notable changes to the **Loan Manager Pro** project will be documented in th
 
 ---
 
+## [1.1.0] - 2026-06-10
+
+### New Amortization Analytics, Expandable Popups & Visual Refinements
+
+This release focuses on making your loan calculations easier to visualize and manage. We have introduced a dedicated loans listing dashboard, beautiful interactive graphs, a detailed month-by-month repayment table, and a fullscreen modal zoom to comfortably inspect your payments.
+
+---
+
+### New Features
+
+#### 📊 My Loans Dashboard
+- **All Loans in One Place**: A brand new dedicated dashboard listing all your loans in premium cards with custom colors.
+- **Repayment Summary**: A portfolio bar showing the total outstanding amount you owe across all active loans.
+- **Search & Filter**: Find loans instantly using search queries, status filter tags (Active, Pending, Paid), or sorting (by Amount or Tenure).
+
+#### 📈 Interactive Charts & Financial Cards
+- **Repayment Progress Ring**: An animated ring showing the exact percentage of the loan you have paid off.
+- **Principal vs. Interest Split**: A donut chart showing how much of your total payments go toward principal vs. interest.
+- **Interactive Amortization Graph**: A stacked bar chart showing the breakdown of principal and interest for each month of your loan.
+- **Smart Insights**: Automatically computes outstanding balance, early closure savings, interest remaining, and projected payoff dates.
+
+#### 🎛️ Chart/Table Toggle & Fullscreen Popup
+- **Chart or Table View**: Switch between the visual bar graph and a detailed monthly grid view with a simple toggle button.
+- **Fullscreen Popup Modal**: Open the amortization schedule in a large dialog popup with sticky headers for convenient tracking.
+- **Current Month Highlight**: The active billing month is clearly highlighted in the chart (with a gold border) and in the table (with a highlighted row) to track where you stand.
+
+---
+
+### Bug Fixes & Adjustments
+
+- **Fixed "Invisible Save Button"**: Resolved a mobile layout issue where the "Save/Update Loan" button was cut off or hidden, making it always visible at the bottom of the form.
+- **Fixed "Database Error" when saving new loans**: Fixed an issue where manual signups occasionally failed to link user profiles, preventing new loans from being saved.
+- **Clean Sidebar Layout**: Organized sidebar pages into a clean, simple order (Dashboard, Loans, Profile) and removed the redundant "What's New" menu button.
+- **Layout & Sizing Fixes**: Fixed an issue where long-term amortization charts could stretch and break page sizing.
+
+---
+
 ## [1.0.0] - 2026-06-05
 
 ### Initial Stable Release
