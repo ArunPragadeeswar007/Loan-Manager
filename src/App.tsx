@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import { supabase, ensureUserProfile, type Profile } from './supabase';
 import { Login } from './components/Login';
 import { Dashboard } from './components/Dashboard';
@@ -56,33 +57,44 @@ function App() {
 
   if (loading) {
     return (
-      <div style={styles.loadingScreen}>
-        <div className="ambient-bg">
-          <div className="ambient-blob-1"></div>
-          <div className="ambient-blob-2"></div>
+      <>
+        <div style={styles.loadingScreen}>
+          <div className="ambient-bg">
+            <div className="ambient-blob-1"></div>
+            <div className="ambient-blob-2"></div>
+          </div>
+          <div style={styles.loaderContainer}>
+            <div style={styles.spinner}></div>
+            <p style={styles.loadingText}>Initializing secure authentication...</p>
+          </div>
         </div>
-        <div style={styles.loaderContainer}>
-          <div style={styles.spinner}></div>
-          <p style={styles.loadingText}>Initializing secure authentication...</p>
-        </div>
-      </div>
+        <Analytics />
+      </>
     );
   }
 
   // 1. If authenticated, show dashboard
   if (session?.user) {
     return (
-      <Dashboard 
-        user={session.user} 
-        profile={profile} 
-        onLogout={handleLogout} 
-        onProfileUpdated={(updatedProfile) => setProfile(updatedProfile)}
-      />
+      <>
+        <Dashboard 
+          user={session.user} 
+          profile={profile} 
+          onLogout={handleLogout} 
+          onProfileUpdated={(updatedProfile) => setProfile(updatedProfile)}
+        />
+        <Analytics />
+      </>
     );
   }
 
   // 2. Otherwise, show login screen
-  return <Login />;
+  return (
+    <>
+      <Login />
+      <Analytics />
+    </>
+  );
 }
 
 const styles: Record<string, React.CSSProperties> = {
